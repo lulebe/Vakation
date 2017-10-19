@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1045805896155",
+    "project_id": "sippenchat"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045805896155:android:e884330f992c0e1b",
+        "android_client_info": {
+          "package_name": "de.lulebe.vakation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045805896155-59hc0d0f4fqg56tpo5ojj0d8aka83tki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.lulebe.vakation",
+            "certificate_hash": "98a775b0fd28ac7fa741da89aee674d67f31eb3c"
+          }
+        },
+        {
+          "client_id": "1045805896155-nl8ngl5pr3t97tffqo1repujrn3fm6to.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc9f1aHfgQdHYrB2REFN9Rt-SwcdIwkQY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

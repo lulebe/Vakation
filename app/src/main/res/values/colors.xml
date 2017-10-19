@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#616161</color>
+    <color name="colorPrimaryDark">#373737</color>
+    <color name="colorAccent">#90A4AE</color>
+    <color name="dividerColor">#33000000</color>
+
+    <color name="colorPrimaryForest">#795548</color>
+    <color name="colorPrimaryDarkForest">#4B2C20</color>
+    <color name="colorAccentForest">#81C784</color>
+    <color name="colorPrimaryBeach">#03A9f4</color>
+    <color name="colorPrimaryDarkBeach">#007AC1</color>
+    <color name="colorAccentBeach">#d2ae29</color>
+    <color name="colorPrimaryCity">#607D8B</color>
+    <color name="colorPrimaryDarkCity">#34515E</color>
+    <color name="colorAccentCity">#FF5252</color>
+    <color name="colorPrimaryParty">#9C27B0</color>
+    <color name="colorPrimaryDarkParty">#6A0080</color>
+    <color name="colorAccentParty">#36b495</color>
+
+    <color name="introBG1">#a3408b</color>
+    <color name="introBG2">#5e7dba</color>
+    <color name="introBG3">#d95353</color>
+
+    <color name="sky">#c3d4ed</color>
+    <color name="skyline">#263238</color>
+</resources>

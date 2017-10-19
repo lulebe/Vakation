@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorSchemeOptionView">
+        <attr name="primaryColor" format="color" />
+        <attr name="accentColor" format="color" />
+        <attr name="colorName" format="string" />
+    </declare-styleable>
+</resources>

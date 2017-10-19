@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">TripTrack</string>
+    <string name="intro_slide1_title">Welcome To TripTrack</string>
+    <string name="intro_slide1_description">TripTrack helps you remember your trips, events and holidys.</string>
+    <string name="intro_slide2_title">Save Media</string>
+    <string name="intro_slide2_description">Save pictures and videos from Google Photos. Store voice memos and text. Add locations to all of them.</string>
+    <string name="intro_slide3_title">Device access</string>
+    <string name="intro_slide3_description">We need access to your location to save it alongside your media.</string>
+
+    <string name="search_title">Search</string>
+    <string name="search_hint">e.g. Barcelona</string>
+    <string name="info_no_trips">You haven\'t created any trips yet. Tap + to add one.</string>
+
+    <string name="activity_title_create_trip">Create A Trip</string>
+    <string name="create_trip_ethint_name">Name</string>
+    <string name="create_trip_dphint_startdate">Start Date</string>
+    <string name="create_trip_dphint_enddate">End Date</string>
+    <string name="create_trip_cphint_colorscheme">Color Scheme</string>
+    <string name="create_trip_hint_tags">Tags</string>
+    <string name="create_trip_hint_locations">Locations</string>
+    <string name="create_trip_hint_searchlocations">Search for Places</string>
+    <string name="create_trip_hint_tagsinput">Add Tags to this Trip</string>
+    <string name="loading_trip">Loading Trip</string>
+</resources>
