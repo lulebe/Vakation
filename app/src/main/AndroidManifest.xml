@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -41,9 +42,32 @@
             android:parentActivityName=".ui.HomeActivity"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/BlackbarTheme" />
-        <activity android:name=".ui.TripActivity"
+        <activity
+            android:name=".ui.TripActivity"
             android:label="@string/loading_trip"
-            android:parentActivityName=".ui.HomeActivity"/>
+            android:parentActivityName=".ui.HomeActivity"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.SearchActivity"
+            android:label="@string/title_activity_search"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.HomeActivity"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.AddTextActivity"
+            android:label="@string/title_activity_add_text"
+            android:parentActivityName=".ui.TripActivity"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.AddAudioActivity"
+            android:label="@string/title_activity_add_audio"
+            android:parentActivityName=".ui.TripActivity"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

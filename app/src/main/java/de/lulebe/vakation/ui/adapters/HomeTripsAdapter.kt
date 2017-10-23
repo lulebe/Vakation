@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import de.lulebe.vakation.R
+import de.lulebe.vakation.data.ColorScheme
 import de.lulebe.vakation.data.DbLocation
 import de.lulebe.vakation.data.TripWithLocationsAndTags
+import de.lulebe.vakation.ui.views.ColorSchemeView
 import me.gujun.android.taggroup.TagGroup
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,8 +22,9 @@ class HomeTripsAdapter: RecyclerView.Adapter<HomeTripsAdapter.ViewHolder>() {
     private var items = emptyList<TripWithLocationsAndTags>()
     private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
-    var tripClickListener: ((tripId: Long) -> Unit)? = null
-    var tripLongClickListener: ((tripId: Long) -> Unit)? = null
+    var tripClickListener: ((trip: TripWithLocationsAndTags) -> Unit)? = null
+    var tripLongClickListener: ((trip: TripWithLocationsAndTags) -> Unit)? = null
+    var tagClickListener: ((tag: String) -> Unit)? = null
 
     fun setTrips (trips: List<TripWithLocationsAndTags>) {
         items = trips
@@ -38,12 +41,15 @@ class HomeTripsAdapter: RecyclerView.Adapter<HomeTripsAdapter.ViewHolder>() {
         ).joinToString(" ")
         fillLocationsList(holder.locationsList, item.locations)
         holder.tagsList.setTags(item.tags.map { it.name })
+        ColorScheme.colorValues[item.colorScheme]?.let {
+            holder.colorScheme.setColors(it.first, it.second)
+        }
     }
 
     override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.listitem_hometrip, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.listitem_trip, parent, false)
         return ViewHolder(view)
     }
 
@@ -62,6 +68,7 @@ class HomeTripsAdapter: RecyclerView.Adapter<HomeTripsAdapter.ViewHolder>() {
         val tvDates = v.findViewById<TextView>(R.id.tv_dates)!!
         val locationsList = v.findViewById<ViewGroup>(R.id.l_locations)!!
         val tagsList = v.findViewById<TagGroup>(R.id.c_tags)!!
+        val colorScheme = v.findViewById<ColorSchemeView>(R.id.c_colorscheme)!!
         init {
             v.setOnTouchListener { view, motionEvent ->
                 when (motionEvent.action) {
@@ -72,11 +79,14 @@ class HomeTripsAdapter: RecyclerView.Adapter<HomeTripsAdapter.ViewHolder>() {
                 false
             }
             v.setOnClickListener {
-                tripClickListener?.invoke(items[adapterPosition].uid)
+                tripClickListener?.invoke(items[adapterPosition])
             }
             v.setOnLongClickListener {
-                tripLongClickListener?.invoke(items[adapterPosition].uid)
+                tripLongClickListener?.invoke(items[adapterPosition])
                 tripLongClickListener != null
+            }
+            tagsList.setOnTagClickListener {
+                tagClickListener?.invoke(it)
             }
         }
     }

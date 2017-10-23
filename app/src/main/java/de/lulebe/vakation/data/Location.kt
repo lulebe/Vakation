@@ -4,9 +4,21 @@ import android.location.Address
 import com.google.android.gms.location.places.Place
 
 data class Location(val name: String, val address: String, val latitude: Double, val longitude: Double) {
+
     fun toDbLocation(tripId: Long, entityId: Long?): DbLocation =
             DbLocation(entityId, tripId, latitude, longitude, name, address)
+
+
     companion object {
+
+        fun fromDbLocation(dbLoc: DbLocation): Location =
+                Location(
+                        dbLoc.name ?: "unknown",
+                        dbLoc.address ?: "unknown",
+                        dbLoc.latitude,
+                        dbLoc.longitude
+                )
+
         fun fromAddress(ad: Address): Location {
             val name = if (ad.maxAddressLineIndex >= 0) ad.getAddressLine(0) else "unknown"
             var address = ad.latitude.toString() + ", " + ad.longitude.toString()
@@ -22,9 +34,11 @@ data class Location(val name: String, val address: String, val latitude: Double,
             }
             return Location(name, address, ad.latitude, ad.longitude)
         }
+
         fun fromPlace(place: Place): Location {
             return Location(place.name.toString(), place.address.toString(), place.latLng.latitude, place.latLng.longitude)
         }
+
         fun fromCoordinates(latitude: Double, longitude: Double): Location {
             return Location(
                     "unknown",
@@ -33,5 +47,8 @@ data class Location(val name: String, val address: String, val latitude: Double,
                     longitude
             )
         }
+
     }
+
+
 }

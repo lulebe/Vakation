@@ -10,6 +10,7 @@ import android.content.Context
 @TypeConverters(Converters::class)
 abstract class AppDB: RoomDatabase() {
     abstract fun tripDao(): TripDao
+    abstract fun entryDao(): EntryDao
     abstract fun locationDao(): DbLocationDao
     abstract fun tagDao(): TagDao
     abstract fun tagLinkDao(): TagLinkDao

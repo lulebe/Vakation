@@ -45,9 +45,15 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="ForestTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="BeachTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="CityTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="PartyTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 </resources>

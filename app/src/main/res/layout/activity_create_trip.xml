@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     tools:context="de.lulebe.vakation.ui.CreateTripActivity">
 
-    <de.lulebe.vakation.ui.views.MapScrollView
+    <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize">
@@ -192,9 +193,9 @@
                 android:id="@+id/gmap"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:name="com.google.android.gms.maps.MapFragment"/>
+                android:name="de.lulebe.vakation.ui.views.ScrollMapFragment"/>
         </LinearLayout>
-    </de.lulebe.vakation.ui.views.MapScrollView>
+    </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

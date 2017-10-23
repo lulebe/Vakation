@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mi_add_text"
+        android:title="@string/trip_fab_menu_text_memo"
+        android:icon="@drawable/ic_textmemo_white_24dp"
+        android:orderInCategory="1" />
+    <item
+        android:id="@+id/mi_add_audio"
+        android:title="@string/trip_fab_menu_audio_memo"
+        android:icon="@drawable/ic_microphone_white_24dp"
+        android:orderInCategory="2" />
+    <item
+        android:id="@+id/mi_add_video"
+        android:title="@string/trip_fab_menu_video"
+        android:icon="@drawable/ic_video_white_24dp"
+        android:orderInCategory="3" />
+    <item
+        android:id="@+id/mi_add_image"
+        android:title="@string/trip_fab_menu_image"
+        android:icon="@drawable/ic_image_white_24dp"
+        android:orderInCategory="4" />
+</menu>

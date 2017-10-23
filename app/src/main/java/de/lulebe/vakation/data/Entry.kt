@@ -14,9 +14,11 @@ import java.util.*
         ]
 )
 data class Entry(
-        @PrimaryKey(autoGenerate = true) var uid: Long,
         @ColumnInfo(name = "trip_id") var tripId: Long,
         var type: EntryType,
         var date: Date,
+        var title: String,
         var data: String
-)
+) {
+    @PrimaryKey(autoGenerate = true) var uid: Long = 0
+}

@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import de.lulebe.vakation.R
 import de.lulebe.vakation.data.*
+import de.lulebe.vakation.ui.views.ScrollMapFragment
 import kotlinx.android.synthetic.main.activity_create_trip.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -156,6 +157,10 @@ class CreateTripActivity : AppCompatActivity() {
     private fun manageMap() {
         val mapFragment = fragmentManager.findFragmentById(R.id.gmap) as MapFragment
         val placeFragment = fragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as PlaceAutocompleteFragment
+
+        (fragmentManager.findFragmentById(R.id.gmap) as ScrollMapFragment).setListener {
+            scrollview.requestDisallowInterceptTouchEvent(true)
+        }
 
         mapFragment.getMapAsync { map ->
             googleMap = map

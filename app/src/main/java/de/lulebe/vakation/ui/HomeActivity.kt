@@ -10,12 +10,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.Menu
 import android.view.View
-import android.widget.Toast
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import de.lulebe.vakation.R
 import de.lulebe.vakation.data.AppDB
 import de.lulebe.vakation.data.Permissions
 import de.lulebe.vakation.data.TripUtils
+import de.lulebe.vakation.ui.ViewExt.fadeIn
+import de.lulebe.vakation.ui.ViewExt.fadeOut
 import de.lulebe.vakation.ui.adapters.HomeTripsAdapter
 import de.lulebe.vakation.ui.intro.IntroActivity
 import kotlinx.android.synthetic.main.activity_home.*
@@ -43,7 +44,15 @@ class HomeActivity : AppCompatActivity(), MaterialSearchView.OnQueryTextListener
 
         adapter.tripClickListener = {
             val intent = Intent(this, TripActivity::class.java)
-            intent.putExtra("tripId", it)
+            intent.putExtra("tripId", it.uid)
+            intent.putExtra("colorScheme", it.colorScheme.name)
+            intent.putExtra("name", it.name)
+            startActivity(intent)
+        }
+        adapter.tagClickListener = { q: String ->
+            val intent = Intent(this, SearchActivity::class.java)
+            intent.putExtra("query", q)
+            intent.putExtra("tagOnly", true)
             startActivity(intent)
         }
 
@@ -86,7 +95,12 @@ class HomeActivity : AppCompatActivity(), MaterialSearchView.OnQueryTextListener
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        Toast.makeText(this, "Search will be added later.", Toast.LENGTH_SHORT).show()
+        query?.let {
+            val intent = Intent(this@HomeActivity, SearchActivity::class.java)
+            intent.putExtra("query", it)
+            intent.putExtra("tagOnly", false)
+            startActivity(intent)
+        }
         return false
     }
 
@@ -98,11 +112,11 @@ class HomeActivity : AppCompatActivity(), MaterialSearchView.OnQueryTextListener
             val trips = TripUtils.getTripsWithTagsAndLocations(db)
             uiThread {
                 if (trips.isEmpty()) {
-                    rv_trips.visibility = View.GONE
-                    no_trips.visibility = View.VISIBLE
+                    rv_trips.fadeOut()
+                    no_trips.fadeIn()
                 } else {
-                    rv_trips.visibility = View.VISIBLE
-                    no_trips.visibility = View.GONE
+                    rv_trips.fadeIn()
+                    no_trips.fadeOut()
                 }
                 adapter.setTrips(trips)
             }

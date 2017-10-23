@@ -21,6 +21,14 @@
           }
         },
         {
+          "client_id": "1045805896155-6se2ro5jvgace8rvqn27rm5o0pc1a2oo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.lulebe.vakation",
+            "certificate_hash": "7F:E0:A5:E9:63:15:BC:41:3E:CE:00:72:0C:3C:23:8E:66:77:15:62"
+          }
+        },
+        {
           "client_id": "1045805896155-nl8ngl5pr3t97tffqo1repujrn3fm6to.apps.googleusercontent.com",
           "client_type": 3
         }
