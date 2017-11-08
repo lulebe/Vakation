@@ -21,4 +21,22 @@ data class Entry(
         var data: String
 ) {
     @PrimaryKey(autoGenerate = true) var uid: Long = 0
+
+    data class AudioData(val audioFileName: String, val duration: Long, val ampsFileName: String) {
+        companion object {
+            fun from (entryData: String): AudioData {
+                val parts = entryData.split("|")
+                return AudioData(parts[0], parts[1].toLong(), parts[2])
+            }
+        }
+    }
+
+    data class ImageData(val imageFileNames: List<String>, val size: Int) {
+        companion object {
+            fun from (entryData: String): ImageData {
+                val d = entryData.split("|")
+                return ImageData(d, d.size)
+            }
+        }
+    }
 }

@@ -14,14 +14,17 @@ android {
         applicationId "de.lulebe.vakation"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 1
-        versionName "0.0.1"
+        versionCode 4
+        versionName "0.0.4"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dexOptions {
+        jumboMode = true
     }
 }
 
@@ -48,10 +51,11 @@ dependencies {
     implementation 'com.nex3z:flow-layout:1.0.0'
     implementation 'me.gujun.android.taggroup:library:1.4@aar'
     implementation 'com.github.kobakei:MaterialFabSpeedDial:1.1.7'
-    implementation 'com.github.adrielcafe:AndroidAudioRecorder:0.3.0'
-    implementation 'com.github.adrielcafe:AndroidAudioConverter:0.0.8'
     implementation 'com.jsibbold:zoomage:1.1.0'
     implementation 'com.github.halilozercan:BetterVideoPlayer:1.1.0'
+    implementation 'org.apache.commons:commons-math3:3.2'
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
 }
 
 

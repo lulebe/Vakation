@@ -24,4 +24,6 @@
 
     <color name="sky">#c3d4ed</color>
     <color name="skyline">#263238</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

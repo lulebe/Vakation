@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="260dp"
+    android:layout_height="wrap_content"
     app:cardCornerRadius="0dp"
     app:cardElevation="3dp"
     android:clipToPadding="false">
@@ -11,6 +11,13 @@
     <de.lulebe.vakation.ui.views.ScrollMapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="260dp" />
+
+    <LinearLayout
+        android:id="@+id/l_locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="260dp"
+        android:orientation="vertical" />
 
 </android.support.v7.widget.CardView>

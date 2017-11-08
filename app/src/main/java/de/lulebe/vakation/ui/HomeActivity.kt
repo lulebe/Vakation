@@ -59,17 +59,11 @@ class HomeActivity : AppCompatActivity(), MaterialSearchView.OnQueryTextListener
         fab.setOnClickListener(startCreateTripActivity)
     }
 
-    override fun onStart() {
-        super.onStart()
-        val sp = getSharedPreferences("internal", Context.MODE_PRIVATE)
-        if (!sp.getBoolean("googleSignedIn", false))
-            startActivity(Intent(this, SignIntoGoogleActivity::class.java))
-        else if (Permissions.needsPermissions(this) || !sp.getBoolean("introDone", false))
-            startActivity(Intent(this, IntroActivity::class.java))
-    }
-
     override fun onResume() {
         super.onResume()
+        val sp = getSharedPreferences("internal", Context.MODE_PRIVATE)
+        if (Permissions.needsPermissions(this) || !sp.getBoolean("introDone", false))
+            startActivity(Intent(this, IntroActivity::class.java))
         displayTrips()
     }
 

@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">TripTrack</string>
     <string name="intro_slide1_title">Welcome To TripTrack</string>
-    <string name="intro_slide1_description">TripTrack helps you remember your trips, events and holidys.</string>
+    <string name="intro_slide1_description">TripTrack helps you remember your trips, events and holidays.</string>
     <string name="intro_slide2_title">Save Media</string>
-    <string name="intro_slide2_description">Save pictures and videos from Google Photos. Store voice memos and text. Add locations to all of them.</string>
+    <string name="intro_slide2_description">Save pictures from Google Photos, your Camera, Dropbox or any other storage.. Store voice memos and text. Add locations to all of them.</string>
     <string name="intro_slide3_title">Device access</string>
     <string name="intro_slide3_description">We need access to your location to save it alongside your media.</string>
 
@@ -24,7 +24,7 @@
     <string name="loading_trip">Loading Trip</string>
     <string name="trip_fab_menu_text_memo">Text Memo</string>
     <string name="trip_fab_menu_audio_memo">Audio Memo</string>
-    <string name="trip_fab_menu_image">Add Images</string>
+    <string name="trip_fab_menu_image">Images</string>
     <string name="trip_fab_menu_video">Video</string>
     <string name="trip_tab_text_feed">Feed</string>
     <string name="trip_tab_text_settings">Settings</string>
@@ -39,6 +39,7 @@
     <string name="trip_settings_save_changes">save changes</string>
     <string name="title_activity_add_text">Add Text Memo</string>
     <string name="title_activity_add_audio">Add Audio Memo</string>
+    <string name="title_activity_add_image">Add Images</string>
     <string name="add_text_inputhint">Memo</string>
     <string name="add_entry_inputhinttitle">Title</string>
     <string name="save">save</string>

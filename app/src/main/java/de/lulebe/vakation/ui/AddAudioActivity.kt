@@ -6,9 +6,11 @@ import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.TypedValue
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
@@ -25,6 +27,7 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 import java.lang.IllegalStateException
 import java.lang.RuntimeException
+import java.util.*
 
 class AddAudioActivity : AddEntryActivity() {
 
@@ -33,6 +36,10 @@ class AddAudioActivity : AddEntryActivity() {
 
     private var mPlayer: MediaPlayer? = null
     private var mRecorder: MediaRecorder? = null
+    private var mAmpTimer: Timer? = null
+    private val mAmpList = mutableListOf<Int>()
+    private var mRecStartTime = 0L
+    private var mRecDuration = 0L
     private var fileName = ""
     private var recorded = false
 
@@ -80,6 +87,7 @@ class AddAudioActivity : AddEntryActivity() {
     override fun saveEntry(done: () -> Unit) {
         if (!recorded) {
             Toast.makeText(this, "Please make a recording first.", Toast.LENGTH_SHORT).show()
+            done()
             return
         }
         val title = getInputTitle()
@@ -87,8 +95,15 @@ class AddAudioActivity : AddEntryActivity() {
         val tags = getTags()
         val time = getDate()
         doAsync {
+            val ampsFileName = fileName.replace(".aac", "_amps.json")
+            val ampsFileContent = "[" + mAmpList.joinToString(",") { it.toString() } + "]"
+            val ampsFilePath = getExternalFilesDir(Environment.DIRECTORY_MUSIC).path +
+                    File.separator +
+                    ampsFileName
+            File(ampsFilePath).writeText(ampsFileContent)
+            val data = fileName + "|" + mRecDuration.toString() + "|" + ampsFileName
             val db = AppDB.getInstance(this@AddAudioActivity)
-            val entry = Entry(tripId, EntryType.AUDIO, time, title, fileName)
+            val entry = Entry(tripId, EntryType.AUDIO, time, title, data)
             val entryId = db.entryDao().insertEntry(entry)
             tags.forEach {
                 TagLinkUtils.addTagToEntry(db, tripId, entryId, it)
@@ -105,9 +120,7 @@ class AddAudioActivity : AddEntryActivity() {
 
     private fun startRecording() {
         val lift = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4F, resources.displayMetrics)
-        btn_record.animate().scaleX(1.7F).scaleY(1.7F)
-                .setDuration(80)
-                .start()
+        btn_record.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         title = "recording..."
         mRecorder?.let {
             it.reset()
@@ -125,13 +138,18 @@ class AddAudioActivity : AddEntryActivity() {
             it.setAudioEncodingBitRate(128000)
             it.prepare()
             it.start()
+            mRecStartTime = System.currentTimeMillis()
+            startRecordingAmplitude(it)
         }
     }
 
     private fun endRecording() {
+        mRecDuration = System.currentTimeMillis() - mRecStartTime
+        stopRecordingAmplitude()
         btn_record.animate().scaleX(1F).scaleY(1F)
-                .setDuration(80)
+                .setDuration(40)
                 .start()
+        btn_record.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         title = resources.getString(R.string.title_activity_add_audio)
         mRecorder?.let { rec ->
             try {
@@ -153,6 +171,31 @@ class AddAudioActivity : AddEntryActivity() {
                 }
             }
         }
+    }
+
+    private fun startRecordingAmplitude(recorder: MediaRecorder) {
+        val handler = Handler()
+        mAmpList.clear()
+        mAmpTimer = Timer()
+        mAmpTimer!!.scheduleAtFixedRate(object: TimerTask() {
+            override fun run() {
+                val amp = recorder.maxAmplitude
+                val ampPercentage = amp.toFloat().div(65536).times(100).toInt()
+                mAmpList.add(ampPercentage)
+                val scale = 1.7F + ampPercentage.toFloat()/100F
+                handler.post {
+                    title = "recording... " + (System.currentTimeMillis()-mRecStartTime)/1000 + "s"
+                    btn_record.scaleX = scale
+                    btn_record.scaleY = scale
+                    c_amp.ampsData = mAmpList
+                }
+            }
+        }, 0, 100)
+    }
+
+    private fun stopRecordingAmplitude() {
+        mAmpTimer?.cancel()
+        btn_record.alpha = 1F
     }
 
     private fun startPlayback() {

@@ -105,12 +105,12 @@ abstract class AddEntryActivity : AppCompatActivity() {
             if (intent.getBooleanExtra("editEntry", false))
                 updateEntryBase {
                     dialog.dismiss()
-                    cancelEntry()
+                    finish()
                 }
             else
                 saveEntry {
                     dialog.dismiss()
-                    cancelEntry()
+                    finish()
                 }
             true
         }

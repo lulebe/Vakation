@@ -15,9 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import de.lulebe.vakation.R
-import de.lulebe.vakation.data.AppDB
-import de.lulebe.vakation.data.EntryType
-import de.lulebe.vakation.data.Location
+import de.lulebe.vakation.data.*
 import de.lulebe.vakation.ui.adapters.TripEntriesAdapter
 import io.github.kobakei.materialfabspeeddial.FabSpeedDial
 import org.jetbrains.anko.doAsync
@@ -34,7 +32,9 @@ class TripFeedFragment : Fragment() {
 
     init {
         adapter.itemClickedListener = {
-            // TODO open item
+            when (it.type) {
+                EntryType.IMAGES -> showImage(it)
+            }
         }
         adapter.itemLongClickedListener = {
             AlertDialog.Builder(context)
@@ -97,6 +97,7 @@ class TripFeedFragment : Fragment() {
             when (itemId) {
                 R.id.mi_add_text -> openAddActivity(AddTextActivity::class.java)
                 R.id.mi_add_audio -> openAddActivity(AddAudioActivity::class.java)
+                R.id.mi_add_image -> openAddActivity(AddImagesActivity::class.java)
             }
         }
 
@@ -156,14 +157,35 @@ class TripFeedFragment : Fragment() {
             val entry = db.entryDao().getOne(entryId)
             when (entry.type) {
                 EntryType.AUDIO -> {
-                    val file = File(activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC).path +
+                    var file = File(activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC).path +
                             File.separator +
-                            entry.data)
+                            Entry.AudioData.from(entry.data).audioFileName)
                     if (file.exists())
                         file.delete()
+                    file = File(activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC).path +
+                            File.separator +
+                            Entry.AudioData.from(entry.data).ampsFileName)
+                    if (file.exists())
+                        file.delete()
+                }
+                EntryType.IMAGES -> {
+                    val dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES).canonicalPath + File.separator
+                    entry.data.split("|")
+                            .map { File(dir + it) }
+                            .forEach {
+                                if (it.exists())
+                                    it.delete()
+                            }
                 }
             }
             db.entryDao().deleteEntryById(entryId)
         }
+    }
+
+    private fun showImage(entry: EntryWithLocationAndTags) {
+        val intent = Intent(context, GalleryActivity::class.java)
+        intent.putExtra("tripId", arguments.getLong("tripId"))
+        intent.putExtra("entryId", entry.uid)
+        startActivity(intent)
     }
 }

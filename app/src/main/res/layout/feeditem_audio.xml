@@ -26,16 +26,28 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title"/>
 
-        <ImageView
-            android:id="@+id/btn_playstop"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="8dp"
-            android:padding="12dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_play_circle_filled_grey600_24dp"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/btn_playstop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_play_circle_filled_grey600_24dp"/>
+
+            <de.lulebe.vakation.ui.views.AudioAmpView
+                android:id="@+id/c_amp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="64dp"/>
+
+        </FrameLayout>
 
         <me.gujun.android.taggroup.TagGroup
             android:id="@+id/c_tags"

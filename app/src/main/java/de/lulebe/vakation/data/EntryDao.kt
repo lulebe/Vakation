@@ -15,6 +15,9 @@ interface EntryDao {
     @Query("SELECT * FROM entries WHERE trip_id = :tripId")
     fun getEntriesForTripLive(tripId: Long): LiveData<List<EntryWithLocationAndTags>>
 
+    @Query("SELECT * FROM entries WHERE trip_id = :tripId AND type = :type")
+    fun getEntriesWithTypeForTrip(type: EntryType, tripId: Long): List<Entry>
+
     @Query("SELECT * FROM entries WHERE uid = :entryId")
     fun getEntryWithLocation(entryId: Long): EntryWithLocationAndTags
 

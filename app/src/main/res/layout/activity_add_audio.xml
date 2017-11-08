@@ -4,6 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <de.lulebe.vakation.ui.views.AudioAmpView
+        android:id="@+id/c_amp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="@dimen/activity_horizontal_margin"/>
 
     <ImageView
         android:id="@+id/btn_delete"

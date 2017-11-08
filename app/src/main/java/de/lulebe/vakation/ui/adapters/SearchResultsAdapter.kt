@@ -67,7 +67,7 @@ class SearchResultsAdapter: RecyclerView.Adapter<SearchResultsAdapter.ViewHolder
         SearchResult.Type.TRIP -> VIEW_TYPE_TRIP
         else -> {
             when(results[position].entry!!.type) {
-                EntryType.IMAGE -> VIEW_TYPE_ENTRY_IMAGE
+                EntryType.IMAGES -> VIEW_TYPE_ENTRY_IMAGE
                 EntryType.AUDIO -> VIEW_TYPE_ENTRY_IMAGE
                 EntryType.VIDEO -> VIEW_TYPE_ENTRY_IMAGE
                 else -> VIEW_TYPE_ENTRY_TEXT

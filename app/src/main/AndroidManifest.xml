@@ -34,7 +34,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.SignIntoGoogleActivity" />
         <!-- suppress AndroidDomInspection -->
         <activity
             android:name=".ui.CreateTripActivity"
@@ -46,8 +45,8 @@
             android:name=".ui.TripActivity"
             android:label="@string/loading_trip"
             android:parentActivityName=".ui.HomeActivity"
-            android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme"
+            android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.SearchActivity"
@@ -67,7 +66,27 @@
             android:label="@string/title_activity_add_audio"
             android:parentActivityName=".ui.TripActivity"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.AddImagesActivity"
+            android:label="@string/title_activity_add_image"
+            android:parentActivityName=".ui.TripActivity"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="de.lulebe.vakation"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".ui.GalleryActivity"
+            android:theme="@style/FullscreenTheme"/>
     </application>
 
 </manifest>

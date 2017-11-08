@@ -5,23 +5,30 @@ import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
 import android.media.MediaPlayer
+import android.os.Environment
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import de.lulebe.vakation.R
+import de.lulebe.vakation.data.Entry
 import de.lulebe.vakation.data.EntryType
 import de.lulebe.vakation.data.EntryWithLocationAndTags
 import de.lulebe.vakation.data.Location
+import de.lulebe.vakation.ui.views.AudioAmpView
 import de.lulebe.vakation.ui.views.ScrollMapView
 import me.gujun.android.taggroup.TagGroup
+import org.jetbrains.anko.doAsync
+import java.io.File
 
 
 class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAdapter.ViewHolder>() {
@@ -103,14 +110,28 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
                 holder.showTagsCard(!tripTags.isEmpty())
             }
             is TextViewHolder -> {
-                val item = items[position-2]
+                val item = items[position-entryOffset]
                 holder.tvTitle.text = item.title
                 holder.tvText.text = item.data
                 holder.tagsList.setTags(item.tags.map { it.name })
             }
             is AudioViewHolder -> {
-                val item = items[position-2]
+                val item = items[position-entryOffset]
                 holder.tvTitle.text = item.title
+                holder.tagsList.setTags(item.tags.map { it.name })
+                holder.loadAmpData()
+            }
+            is ImageViewHolder -> {
+                val item = items[position-entryOffset]
+                val imageData = Entry.ImageData.from(item.data)
+                holder.tvTitle.text = item.title
+                if (imageData.size > 1) {
+                    holder.tvMore.visibility = View.VISIBLE
+                    holder.tvMore.text = "+ " + (imageData.size-1).toString()
+                } else {
+                    holder.tvMore.visibility = View.GONE
+                }
+                holder.loadImg(imageData.imageFileNames[0])
                 holder.tagsList.setTags(item.tags.map { it.name })
             }
         }
@@ -123,7 +144,7 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
         if (position == 1) return TYPE_TRIP_TAGS
         if (items.isEmpty()) return TYPE_EMPTY_INFO
         return when(items[position-entryOffset].type) {
-            EntryType.IMAGE -> TYPE_IMAGE
+            EntryType.IMAGES -> TYPE_IMAGE
             EntryType.AUDIO -> TYPE_AUDIO
             EntryType.VIDEO -> TYPE_VIDEO
             else -> TYPE_TEXT
@@ -136,9 +157,11 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
             EmptyinfoViewHolder(v)
         }
         TYPE_TRIP_MAP -> {
-            boundsPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50F, parent.resources.displayMetrics).toInt()
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.feeditem_map, parent, false)
-            mMapViewHolder = MapViewHolder(v)
+            if (mMapViewHolder == null) {
+                boundsPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50F, parent.resources.displayMetrics).toInt()
+                val v = LayoutInflater.from(parent.context).inflate(R.layout.feeditem_map, parent, false)
+                mMapViewHolder = MapViewHolder(v)
+            }
             mMapViewHolder!!
         }
         TYPE_TRIP_TAGS -> {
@@ -146,8 +169,8 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
             TagsViewHolder(v)
         }
         TYPE_IMAGE -> {
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.feeditem_text, parent, false)
-            TextViewHolder(v)
+            val v = LayoutInflater.from(parent.context).inflate(R.layout.feeditem_image, parent, false)
+            ImageViewHolder(v)
         }
         TYPE_VIDEO -> {
             val v = LayoutInflater.from(parent.context).inflate(R.layout.feeditem_text, parent, false)
@@ -169,8 +192,8 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
 
     inner class MapViewHolder(v: View): ViewHolder(v) {
         val map = v.findViewById<ScrollMapView>(R.id.map)!!
+        val locationsList = v.findViewById<ViewGroup>(R.id.l_locations)!!
         init {
-            this.setIsRecyclable(false)
             mMapView = map
             map.onCreate(null)
             map.touchInterceptListener = {
@@ -182,12 +205,25 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
             map.getMapAsync { m ->
                 m.setMaxZoomPreference(17F)
                 m.clear()
+                locationsList.removeAllViews()
                 if (!tripLocations.isEmpty()) {
                     val boundsBuilder = LatLngBounds.Builder()
-                    tripLocations.forEach {
+                    tripLocations.forEachIndexed { id, it ->
+                        //map zoom & markers
                         val latlng = LatLng(it.latitude, it.longitude)
                         m.addMarker(MarkerOptions().position(latlng).title(it.name).snippet(it.address))
                         boundsBuilder.include(latlng)
+                        //locations list
+                        val locationView = LayoutInflater.from(locationsList.context).inflate(R.layout.listitem_triplocations, locationsList, false)
+                        locationView.findViewById<TextView>(R.id.tv_name).text = it.name
+                        locationView.findViewById<TextView>(R.id.tv_address).text = it.address
+                        locationView.findViewById<View>(R.id.btn_delete).visibility = View.GONE
+                        locationView.setOnClickListener {
+                            m.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15F))
+                        }
+                        if (id == tripLocations.size-1)
+                            locationView.findViewById<View>(R.id.divider).visibility = View.GONE
+                        locationsList.addView(locationView)
                     }
                     m.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), boundsPadding))
                 }
@@ -212,6 +248,14 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
         val tvTitle = v.findViewById<TextView>(R.id.tv_title)!!
         val tagsList = v.findViewById<TagGroup>(R.id.c_tags)!!
         init {
+            v.setOnTouchListener { view, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> view.translationZ = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1F, view.context.resources.displayMetrics)
+                    MotionEvent.ACTION_CANCEL -> view.translationZ = 0F
+                    MotionEvent.ACTION_UP -> view.translationZ = 0F
+                }
+                false
+            }
             v.setOnClickListener {
                 itemClickedListener?.invoke(items[adapterPosition-entryOffset])
             }
@@ -230,17 +274,19 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
     }
 
     inner class AudioViewHolder(v: View): EntryViewHolder(v) {
+        val cAmp = v.findViewById<AudioAmpView>(R.id.c_amp)!!
         private val btnPlayStop = v.findViewById<ImageView>(R.id.btn_playstop)!!
         private var isPlaying = false
         private var isActive = false
         init {
             btnPlayStop.setOnClickListener {
+                val audioFileName = Entry.AudioData.from(items[adapterPosition-entryOffset].data).audioFileName
                 setIsRecyclable(false)
                 if (!isPlaying) {
                     isPlaying = true
                     if (!isActive) {
                         isActive = true
-                        audioPlaybackRequestListener?.invoke(items[adapterPosition-entryOffset].data, {
+                        audioPlaybackRequestListener?.invoke(audioFileName, {
                             isPlaying = false
                             isActive = false
                             setIsRecyclable(true)
@@ -256,6 +302,33 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
                     audioPauseRequestListener?.invoke()
                 }
             }
+        }
+        fun loadAmpData() {
+            val saved = adapterPosition
+            doAsync {
+                val ampsFileName = Entry.AudioData.from(items[adapterPosition-entryOffset].data).ampsFileName
+                val ampsFilePath = cAmp.context.getExternalFilesDir(Environment.DIRECTORY_MUSIC).canonicalPath + File.separator + ampsFileName
+                val ampsData = File(ampsFilePath)
+                        .readText()
+                        .trim()
+                        .removePrefix("[")
+                        .removeSuffix("]")
+                        .split(",")
+                        .map { it.toInt() }
+                if (adapterPosition == saved)
+                    cAmp.ampsData = ampsData
+            }
+        }
+    }
+
+    inner class ImageViewHolder(v: View): EntryViewHolder(v) {
+        val tvMore = v.findViewById<TextView>(R.id.tv_more)
+        private val imgView = v.findViewById<ImageView>(R.id.iv_img)
+        fun loadImg(fileName: String) {
+            val path = imgView.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).canonicalPath +
+                    File.separator +
+                    fileName
+            Glide.with(imgView).load(path).into(imgView)
         }
     }
 }
