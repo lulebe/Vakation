@@ -1,6 +1,8 @@
 package de.lulebe.vakation.ui
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
@@ -13,6 +15,7 @@ import android.util.TypedValue
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import de.lulebe.vakation.R
 import de.lulebe.vakation.data.AppDB
@@ -40,6 +43,7 @@ class AddAudioActivity : AddEntryActivity() {
     private val mAmpList = mutableListOf<Int>()
     private var mRecStartTime = 0L
     private var mRecDuration = 0L
+    private var mAmpAnimator: ObjectAnimator? = null
     private var fileName = ""
     private var recorded = false
 
@@ -211,9 +215,17 @@ class AddAudioActivity : AddEntryActivity() {
             it.prepare()
             it.start()
         }
+        c_amp.playing = true
+        c_amp.playProgress = 0F
+        mAmpAnimator = ObjectAnimator.ofFloat(c_amp, "playProgress", 1F)
+        mAmpAnimator?.duration = mRecDuration
+        mAmpAnimator?.interpolator = LinearInterpolator()
+        mAmpAnimator?.start()
     }
 
     private fun endPlayback() {
+        mAmpAnimator?.cancel()
+        c_amp.playing = false
         btn_record.animate().scaleX(1F).scaleY(1F)
                 .setDuration(80)
                 .start()
@@ -253,6 +265,7 @@ class AddAudioActivity : AddEntryActivity() {
         btn_record.setImageResource(R.drawable.ic_microphone_white_24dp)
         btn_record.animate().translationX(0F).setDuration(100).setInterpolator(DecelerateInterpolator()).start()
         btn_delete.fadeOut()
+        c_amp.reset()
     }
 
     private fun showPlayBtns() {

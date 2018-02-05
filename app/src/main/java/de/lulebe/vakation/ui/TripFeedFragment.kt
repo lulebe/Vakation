@@ -59,9 +59,10 @@ class TripFeedFragment : Fragment() {
             mAudioPlayer?.release()
             mAudioEndListener?.invoke()
             mAudioEndListener = stopListener
-            val path = activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC).path +
+            val path = activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC).canonicalPath +
                     File.separator +
                     fileName
+            Log.d("AUDIOPATH", path)
             mAudioPlayer = MediaPlayer()
             mAudioPlayer?.let {
                 it.setDataSource(path)

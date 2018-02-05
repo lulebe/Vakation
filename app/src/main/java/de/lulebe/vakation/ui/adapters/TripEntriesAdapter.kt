@@ -1,5 +1,6 @@
 package de.lulebe.vakation.ui.adapters
 
+import android.animation.ObjectAnimator
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
@@ -7,11 +8,13 @@ import android.arch.lifecycle.OnLifecycleEvent
 import android.media.MediaPlayer
 import android.os.Environment
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -119,6 +122,11 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
                 val item = items[position-entryOffset]
                 holder.tvTitle.text = item.title
                 holder.tagsList.setTags(item.tags.map { it.name })
+                val durationInSeconds = (Entry.AudioData.from(item.data).duration/1000)
+                val secondsLeft = durationInSeconds % 60
+                val secondsLeftFormatted = secondsLeft.toString().padStart(2, '0')
+                val minutes = ((durationInSeconds - secondsLeft) / 60).toString()
+                holder.tvDuration.text = minutes + ":" + secondsLeftFormatted
                 holder.loadAmpData()
             }
             is ImageViewHolder -> {
@@ -274,29 +282,41 @@ class TripEntriesAdapter(lo: LifecycleOwner): RecyclerView.Adapter<TripEntriesAd
     }
 
     inner class AudioViewHolder(v: View): EntryViewHolder(v) {
-        val cAmp = v.findViewById<AudioAmpView>(R.id.c_amp)!!
+        val tvDuration = v.findViewById<TextView>(R.id.tv_duration)!!
+        private val cAmp = v.findViewById<AudioAmpView>(R.id.c_amp)!!
         private val btnPlayStop = v.findViewById<ImageView>(R.id.btn_playstop)!!
         private var isPlaying = false
         private var isActive = false
         init {
+            var anim: ObjectAnimator? = null
             btnPlayStop.setOnClickListener {
-                val audioFileName = Entry.AudioData.from(items[adapterPosition-entryOffset].data).audioFileName
+                val ad = Entry.AudioData.from(items[adapterPosition-entryOffset].data)
                 setIsRecyclable(false)
                 if (!isPlaying) {
                     isPlaying = true
                     if (!isActive) {
                         isActive = true
-                        audioPlaybackRequestListener?.invoke(audioFileName, {
+                        cAmp.playProgress = 0F
+                        cAmp.playing = true
+                        anim = ObjectAnimator.ofFloat(cAmp, "playProgress", 1F)
+                        anim?.interpolator = LinearInterpolator()
+                        anim?.duration = ad.duration
+                        anim?.start()
+                        audioPlaybackRequestListener?.invoke(ad.audioFileName, {
+                            anim?.cancel()
+                            cAmp.playing = false
                             isPlaying = false
                             isActive = false
                             setIsRecyclable(true)
                             btnPlayStop.setImageResource(R.drawable.ic_play_circle_filled_grey600_24dp)
                         })
                     } else {
+                        anim?.resume()
                         audioPauseRequestListener?.invoke()
                     }
                     btnPlayStop.setImageResource(R.drawable.ic_pause_circle_filled_grey600_24dp)
                 } else {
+                    anim?.pause()
                     isPlaying = false
                     btnPlayStop.setImageResource(R.drawable.ic_play_circle_filled_grey600_24dp)
                     audioPauseRequestListener?.invoke()

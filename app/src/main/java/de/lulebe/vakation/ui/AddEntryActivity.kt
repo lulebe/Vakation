@@ -46,6 +46,7 @@ abstract class AddEntryActivity : AppCompatActivity() {
     private var location: Location? = null
     private var googleMap: GoogleMap? = null
     private var entry: EntryWithLocationAndTags? = null
+    private var saved = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,12 @@ abstract class AddEntryActivity : AppCompatActivity() {
         if (intent.getBooleanExtra("editEntry", false)) {
             loadEntryFromDb(intent.getLongExtra("entryId", 0))
         }
+    }
+
+    override fun onDestroy() {
+        if (!saved)
+            cancelEntry()
+        super.onDestroy()
     }
 
     fun setContent(layout: Int) {
@@ -107,17 +114,20 @@ abstract class AddEntryActivity : AppCompatActivity() {
                     dialog.dismiss()
                     finish()
                 }
-            else
+            else {
+                saved = true
                 saveEntry {
                     dialog.dismiss()
                     finish()
                 }
+            }
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
 
     private fun loadEntryFromDb(entryId: Long) {
+        saved = true
         doAsync {
             val db = AppDB.getInstance(this@AddEntryActivity)
             entry = db.entryDao().getEntryWithLocation(entryId)
